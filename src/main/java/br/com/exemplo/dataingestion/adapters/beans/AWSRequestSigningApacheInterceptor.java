@@ -1,20 +1,6 @@
 package br.com.exemplo.dataingestion.adapters.beans;
 
-import com.amazonaws.DefaultRequest;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.Signer;
-import com.amazonaws.http.HttpMethodName;
-import org.apache.http.Header;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HttpContext;
+import static org.apache.http.protocol.HttpCoreContext.HTTP_TARGET_HOST;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,8 +10,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.amazonaws.DefaultRequest;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.Signer;
+import com.amazonaws.http.HttpMethodName;
 
-import static org.apache.http.protocol.HttpCoreContext.HTTP_TARGET_HOST;
+import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HttpContext;
 
 public class AWSRequestSigningApacheInterceptor implements HttpRequestInterceptor {
     /**
@@ -49,7 +48,7 @@ public class AWSRequestSigningApacheInterceptor implements HttpRequestIntercepto
      * @param signer                 particular signer implementation
      * @param awsCredentialsProvider source of AWS credentials for signing
      */
-    AWSRequestSigningApacheInterceptor(final String service,
+    public AWSRequestSigningApacheInterceptor(final String service,
                                        final Signer signer,
                                        final AWSCredentialsProvider awsCredentialsProvider) {
         this.service = service;

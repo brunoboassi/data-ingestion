@@ -2,38 +2,37 @@ package br.com.exemplo.dataingestion.adapters.beans;
 
 import com.amazonaws.auth.AWS4Signer;
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.regions.Regions;
+
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.context.annotation.Profile;
+
 
 @Configuration
 
 public class ElasticSearchConfig {
 
     @Autowired
-    private AWSCredentialsProvider credentialsProvider = null;
+    private AWSCredentialsProvider awsCredentialsProvider;
 
-    @Value("${elasticsearch.cluster-nodes}")
+    @Value("${spring.elasticsearch.rest.uris}")
     private String host;
 
-
-
-
     @Bean
+    @Profile("aws")
     public RestHighLevelClient client() {
         AWS4Signer signer = new AWS4Signer();
+        signer.setRegionName(Regions.getCurrentRegion().getName());
         String serviceName = "es";
         signer.setServiceName(serviceName);
-        signer.setRegionName("sa-east-1");
-        HttpRequestInterceptor interceptor = new AWSRequestSigningApacheInterceptor(serviceName, signer, credentialsProvider);
+        HttpRequestInterceptor interceptor = new AWSRequestSigningApacheInterceptor(serviceName, signer, awsCredentialsProvider);
         return new RestHighLevelClient(RestClient.builder(HttpHost.create(host)).setHttpClientConfigCallback(e -> e.addInterceptorLast(interceptor)));
-
     }
 }
